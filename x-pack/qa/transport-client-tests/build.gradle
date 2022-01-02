@@ -1,0 +1,22 @@
+apply plugin: 'elasticsearch.standalone-rest-test'
+apply plugin: 'elasticsearch.rest-test'
+
+dependencies {
+  testImplementation project(xpackModule('core'))
+  testImplementation project(path: xpackProject('transport-client').path)
+}
+
+testClusters.matching { it.name == "integTest" }.configureEach {
+  testDistribution = "DEFAULT"
+  setting 'xpack.security.enabled', 'false'
+  setting 'xpack.license.self_generated.type', 'trial'
+}
+
+tasks.named("testingConventions").configure {
+  naming.clear()
+  naming {
+    IT {
+      baseClass 'org.elasticsearch.xpack.ESXPackSmokeClientTestCase'
+    }
+  }
+}
